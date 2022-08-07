@@ -27,7 +27,7 @@ def ussd_callback():
         response += "4. Transfer money"
 
     elif text == '1':
-        response = "CON Insert your Full Name, BVN, Password(12 chars or more) and Account Number seperated by comma eg 'Mr John Bassey Okon, 2847592048, Pa$$word1234, 2262933119'"
+        response = "CON Insert your Full Name, BVN, Password(12 chars or more) and Account Number seperated by comma eg 'Mr John Bassey Okon,2847592048,Pa$$word1234,2262933119'; No spaces after comma"
         # response += "1. Account number \n"
         # response += "2. Account balance"
 
