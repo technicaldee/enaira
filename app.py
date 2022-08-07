@@ -14,8 +14,8 @@ def favicon():
 @app.route('/', methods=['POST', 'GET'])
 def ussd_callback():
     global response
-    session_id = request.values.get("sessionId", None)
-    service_code = request.values.get("serviceCode", None)
+    # session_id = request.values.get("sessionId", None)
+    # service_code = request.values.get("serviceCode", None)
     phone_number = request.values.get("phoneNumber", None)
     text = request.values.get("text", "default")
 
@@ -40,27 +40,43 @@ def ussd_callback():
         response = "END Your balance is " + balance
 
     elif text == '2':
-        url = 'https://rgw.k8s.apis.ng/centric-platforms/uat/enaira-user/GetUserDetailsByPhone'
-        headers = {
-            'Content-Type': 'application/json',
-            'ClientId': '40b011dd72596c3baf51f886f952d51f'
-            }
-        request_data = {
-              "phone_number": phone_number,
-              "user_type": "USER",
-              "channel_code": "APISNG"
-            }
-        res = requests.post(url, headers=headers, json=request_data, verify=False)
-        data = res.json()['response_data']
-        print(data)
-        if(data['Data']['status'] == 'error'):
-            response = 'You are not yet registered with eNaira'
-        else:
+        try:
+            url = 'https://rgw.k8s.apis.ng/centric-platforms/uat/enaira-user/GetUserDetailsByPhone'
+            headers = {
+                'Content-Type': 'application/json',
+                'ClientId': '40b011dd72596c3baf51f886f952d51f'
+                }
+            request_data = {
+                "phone_number": phone_number,
+                "user_type": "USER",
+                "channel_code": "APISNG"
+                }
+            res = requests.post(url, headers=headers, json=request_data, verify=False)
+            data = res.json()['response_data']
+            print(data)
+            # if(data['Data']['status'] == 'error'):
+            #     response = 'You are not yet registered with eNaira'
+            # else:
             response = "END Dear "+data['first_name']+" "+data['last_name']+", The Account Number connected to enaira is: "+data['account_number']+"; "+data['relationship_bank']+". and your wallet address is "+data['wallet_info']['wallet_address']
+        except Exception as e:
+            print(e)
+            response = 'You are not yet registered with eNaira'
     elif text == '3':
-        response = 'Coming Soon'
+        response  = "CON Select the bank or financial provider to credit from \n"
+        response += "1. First Bank \n"
+        response += "2. GTCO \n"
+        response += "3. Zenith Bank \n"
+        response += "4. Access Bank"
+        response += "4. Titan Trust Bank"
+        response += "4. Load More Banks"
     elif text == '4':
-        response = 'Coming Soon'
+        response  = "CON Select the bank or financial provider to transfer monry to \n"
+        response += "1. First Bank \n"
+        response += "2. GTCO \n"
+        response += "3. Zenith Bank \n"
+        response += "4. Access Bank"
+        response += "4. Titan Trust Bank"
+        response += "4. Load More Banks"
     else:
         try:
             transf = text.split(',')
