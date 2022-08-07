@@ -49,13 +49,8 @@ def ussd_callback():
               "user_type": "USER",
               "channel_code": "APISNG"
             }
-        res = ''
-        try:
-            res = requests.post(url, headers=headers, json=request_data, verify=False)
-        except Exception as e:
-            # data = res.json()['response_data']
-            res = e
-        response = res
+        res = requests.post(url, headers=headers, json=request_data, verify=False)
+        response = "END Okay"
     else:
         response = "Error"
 
