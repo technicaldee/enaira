@@ -13,9 +13,9 @@ def favicon():
 @app.route('/', methods=['POST', 'GET'])
 def ussd_callback():
     global response
-    session_id = request.values.get("sessionId", None)
-    service_code = request.values.get("serviceCode", None)
-    phone_number = request.values.get("phoneNumber", None)
+    # session_id = request.values.get("sessionId", None)
+    # service_code = request.values.get("serviceCode", None)
+    # phone_number = request.values.get("phoneNumber", None)
     text = request.values.get("text", "default")
 
     if text == '':
@@ -50,12 +50,13 @@ def ussd_callback():
               "channel_code": "APISNG"
             }
         res = requests.post(url, headers=headers, json=request_data, verify=False)
-        response = "END Okay"
+        data = res.json()['response_data']
+        response = "END "+data['first_name']+" "+data['last_name']+", Your Account Number is: "+data['account_number']
     else:
-        response = "Error"
+        response = "Error..."
 
     return response
 
-# if __name__ == '__main__':
-#     pass
-#     # app.run(host="0.0.0.0")
+if __name__ == '__main__':
+    # pass
+    app.run(host="0.0.0.0",port=8000)
