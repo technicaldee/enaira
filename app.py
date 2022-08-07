@@ -57,6 +57,10 @@ def ussd_callback():
             response = 'You are not yet registered with eNaira'
         else:
             response = "END Dear "+data['first_name']+" "+data['last_name']+", The Account Number connected to enaira is: "+data['account_number']+"; "+data['relationship_bank']+". and your wallet address is "+data['wallet_info']['wallet_address']
+    elif text == '3':
+        response = 'Coming Soon'
+    elif text == '4':
+        response = 'Coming Soon'
     else:
         try:
             transf = text.split(',')
