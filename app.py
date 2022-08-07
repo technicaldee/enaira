@@ -6,6 +6,10 @@ app = Flask(__name__)
 
 response = ""
 
+@app.route('/favicon.ico')
+def favicon():
+    return 'OK'
+
 @app.route('/', methods=['POST', 'GET'])
 def ussd_callback():
     global response
