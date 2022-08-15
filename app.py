@@ -26,9 +26,13 @@ def sendMail(message, phone):
 
 @app.route('/delivery-reports', methods=['POST'])
 def delivery_reports():
-   data = request.get_json(force=True)
-   print(f'Delivery report response...\n ${data}')
-   return Flask.Response(status=200) 
+    phone_number = str(request.values.get("phoneNumber", '08035336810'))
+    phone_number = phone_number.replace(' ', '')
+    data = request.get_json(force=True)
+    
+    print(f'Delivery report response...\n ${data}')
+
+    return Flask.Response(status=200) 
 
 @app.route('/', methods=['POST', 'GET'])
 def ussd_callback():
@@ -48,9 +52,9 @@ def ussd_callback():
         response += "4. Transfer money"
 
     elif text == '1':
-        message = "Send your Full Name, BVN, Password(12 chars or more) and Account Number seperated by comma eg 'Mr John Bassey Okon,2847592048,Pa$$word1234,2262933119'; No spaces after comma"
+        message = "Send your REGISTER and your Full Name, BVN, Password(12 chars or more) and Account Number seperated by comma eg 'REGISTER Mr John Bassey Okon,2847592048,Pa$$word1234,2262933119'; No spaces after comma"
         sendMail(message, phone_number)
-        response = "END Send your Full Name, BVN, Password(12 chars or more) and Account Number seperated by comma eg 'Mr John Bassey Okon,2847592048,Pa$$word1234,2262933119'; No spaces after comma"
+        response = "END Dear user, you will receive instructions on how to register for enaira shortly"
         # response += "1. Account number \n"
         # response += "2. Account balance"
 
@@ -63,6 +67,7 @@ def ussd_callback():
         response = "END Your balance is " + balance
 
     elif text == '2':
+        response = 'END Dear user, you will receive an SMS with your enaira details shortly'
         try:
             url = 'https://rgw.k8s.apis.ng/centric-platforms/uat/enaira-user/GetUserDetailsByPhone'
             headers = {
@@ -76,11 +81,17 @@ def ussd_callback():
                 }
             res = requests.post(url, headers=headers, json=request_data, verify=False)
             data = res.json()['response_data']
+            try:
+                if(data['Data']['status'] == 'error'):
+                    tosend = 'You are not yet registered with eNaira'
+                else:
+                    tosend = "Dear "+data['first_name']+" "+data['last_name']+", The Account Number connected to enaira is: "+data['account_number']+"; "+data['relationship_bank']+". and your wallet address is "+data['wallet_info']['wallet_address']
+            except:
+                tosend = 'Something went wrong!'
+            sendMail(tosend, phone_number)
             print(data)
-            # if(data['Data']['status'] == 'error'):
-            #     response = 'You are not yet registered with eNaira'
-            # else:
-            response = "END Dear "+data['first_name']+" "+data['last_name']+", The Account Number connected to enaira is: "+data['account_number']+"; "+data['relationship_bank']+". and your wallet address is "+data['wallet_info']['wallet_address']
+            
+            
         except Exception as e:
             print(e)
             response = 'You are not yet registered with eNaira or an error occured'
