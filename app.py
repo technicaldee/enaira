@@ -1,8 +1,15 @@
 # Your code goes here
+from email import message
 from flask import Flask, request
 import json
 import random
 import requests
+import africastalking
+
+username = 'sandbox'
+api_key = 'd4157382a1cc716cfd17bbbf115dc6213ff7a22286aa3f60e3254d6548cab6b7'
+africastalking.initialize(username, api_key)
+
 app = Flask(__name__)
 
 response = ""
@@ -11,13 +18,27 @@ response = ""
 def favicon():
     return 'OK'
 
+def sendMail(message, phone):
+    africastalking.SMS.send(
+       message,
+       [phone]
+   )
+
+@app.route('/delivery-reports', methods=['POST'])
+def delivery_reports():
+   data = request.get_json(force=True)
+   print(f'Delivery report response...\n ${data}')
+   return Flask.Response(status=200) 
+
 @app.route('/', methods=['POST', 'GET'])
 def ussd_callback():
     global response
-    # session_id = request.values.get("sessionId", None)
-    # service_code = request.values.get("serviceCode", None)
-    phone_number = request.values.get("phoneNumber", None)
+    session_id = request.values.get("sessionId", None)
+    service_code = request.values.get("serviceCode", None)
+    phone_number = str(request.values.get("phoneNumber", '08035336810'))
+    phone_number = phone_number.replace(' ', '')
     text = request.values.get("text", "default")
+    print(text)
 
     if text == '':
         response  = "CON What would you want to do \n"
@@ -27,7 +48,9 @@ def ussd_callback():
         response += "4. Transfer money"
 
     elif text == '1':
-        response = "CON Insert your Full Name, BVN, Password(12 chars or more) and Account Number seperated by comma eg 'Mr John Bassey Okon,2847592048,Pa$$word1234,2262933119'; No spaces after comma"
+        message = "Send your Full Name, BVN, Password(12 chars or more) and Account Number seperated by comma eg 'Mr John Bassey Okon,2847592048,Pa$$word1234,2262933119'; No spaces after comma"
+        sendMail(message, phone_number)
+        response = "END Send your Full Name, BVN, Password(12 chars or more) and Account Number seperated by comma eg 'Mr John Bassey Okon,2847592048,Pa$$word1234,2262933119'; No spaces after comma"
         # response += "1. Account number \n"
         # response += "2. Account balance"
 
@@ -60,7 +83,7 @@ def ussd_callback():
             response = "END Dear "+data['first_name']+" "+data['last_name']+", The Account Number connected to enaira is: "+data['account_number']+"; "+data['relationship_bank']+". and your wallet address is "+data['wallet_info']['wallet_address']
         except Exception as e:
             print(e)
-            response = 'You are not yet registered with eNaira'
+            response = 'You are not yet registered with eNaira or an error occured'
     elif text == '3':
         response  = "CON Select the bank or financial provider to credit from \n"
         response += "1. First Bank \n"
