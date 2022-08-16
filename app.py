@@ -5,8 +5,12 @@ import json
 import random
 import requests
 import africastalking
-import asyncio
-import aioflask
+import http.client
+import ssl
+# import asyncio
+# import aioflask
+
+# from aioflask import Flask, request, Response
 
 username = 'sandbox'
 api_key = 'd4157382a1cc716cfd17bbbf115dc6213ff7a22286aa3f60e3254d6548cab6b7'
@@ -27,26 +31,38 @@ def sendMail(message, phone):
    )
 
 def option2(phone_number):
-    url = 'https://rgw.k8s.apis.ng/centric-platforms/uat/enaira-user/GetUserDetailsByPhone'
-    headers = {
-                'Content-Type': 'application/json',
-                'ClientId': '40b011dd72596c3baf51f886f952d51f'
-                }
-    request_data = {
-                "phone_number": phone_number,
+
+    conn = http.client.HTTPSConnection("rgw.k8s.apis.ng", context = ssl._create_unverified_context())
+
+    payload = {
+                "phone_number": phone_number.replace('+234', '0'),
                 "user_type": "USER",
                 "channel_code": "APISNG"
                 }
-    res = requests.post(url, headers=headers, json=request_data, verify=False)
-    data = res.json()['response_data']
+
+    headers = {
+        'ClientId': "40b011dd72596c3baf51f886f952d51f",
+        'content-type': "application/json",
+        'accept': "application/json"
+        }
+
+    conn.request(method="POST", url="/centric-platforms/uat/enaira-user/GetUserDetailsByPhone", body=json.dumps(payload), headers=headers)
+
+    res = conn.getresponse()
+    data = res.read()
+
+    ndata = json.loads(data.decode("utf-8"))
+    data = ndata['response_data']
     try:
-        if(data['Data']['status'] == 'error'):
+        if('Data' in data):
             tosend = 'You are not yet registered with eNaira'
+            sendMail(tosend, phone_number)
         else:
             tosend = "Dear "+data['first_name']+" "+data['last_name']+", \n The Account Number connected to enaira is: \n "+data['account_number']+"; "+data['relationship_bank']+". \n and your wallet address is "+data['wallet_info']['wallet_address']
+            sendMail(tosend, phone_number)
     except:
         tosend = 'Something went wrong!'
-    sendMail(tosend, phone_number)
+        # sendMail(tosend, phone_number)
     print(data)
 
 def register(text, phone_number):
@@ -96,7 +112,7 @@ def register(text, phone_number):
 
 @app.route('/delivery-reports', methods=['POST'])
 async def delivery_reports():
-    phone_number = str(request.values.get("phoneNumber", '08035336810'))
+    phone_number = str(request.values.get("phoneNumber", '+2348035336810'))
     phone_number = phone_number.replace(' ', '')
     data = request.get_json(force=True)
     text = request.get_json(force=True)
@@ -113,7 +129,7 @@ async def ussd_callback():
     global response
     session_id = request.values.get("sessionId", None)
     service_code = request.values.get("serviceCode", None)
-    phone_number = str(request.values.get("phoneNumber", '08035336810'))
+    phone_number = str(request.values.get("phoneNumber", '+2348035336810'))
     phone_number = phone_number.replace(' ', '')
     text = request.values.get("text", "default")
     print(text)
@@ -131,8 +147,9 @@ async def ussd_callback():
         response = "END Dear user, you will receive instructions on how to register for enaira shortly"
 
     elif text == '2':
-        await option2(phone_number)
+        option2(phone_number)
         response = 'END Dear user, you will receive an SMS with your enaira details shortly'
+        return response
         
     elif text == '3':
         response  = "CON Select the bank or financial provider to credit from \n"
@@ -157,8 +174,10 @@ async def ussd_callback():
 
     elif '4*' in text:
         response = "END Send TRANSFER with account number to 88081"
+    else:
+        response = 'END An error occured!'
     return response
 
 # if __name__ == '__main__':
-#     # pass
+# #     # pass
 #     app.run(host="0.0.0.0",port=8000)
