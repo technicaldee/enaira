@@ -111,7 +111,7 @@ def register(text, phone_number):
         return res
 
 @app.route('/delivery-reports', methods=['POST'])
-async def delivery_reports():
+def delivery_reports():
     phone_number = str(request.values.get("phoneNumber", '+2348035336810'))
     phone_number = phone_number.replace(' ', '')
     data = request.get_json(force=True)
@@ -119,13 +119,13 @@ async def delivery_reports():
     
     print(f'Delivery report response...\n ${data}')
 
-    await sendMail(register(text, phone_number), phone_number)
-    await sendMail(data, phone_number)
+    sendMail(register(text, phone_number), phone_number)
+    sendMail(data, phone_number)
 
     return Flask.Response(status=200) 
 
 @app.route('/', methods=['POST', 'GET'])
-async def ussd_callback():
+def ussd_callback():
     global response
     session_id = request.values.get("sessionId", None)
     service_code = request.values.get("serviceCode", None)
