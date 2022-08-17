@@ -112,8 +112,8 @@ def register(text, phone_number):
 
 @app.route('/incoming-messages', methods=['POST'])
 def incoming_messages():
-   data = request.get_json(force=True)
-   print(f'Incoming message...\n ${data}')
+#    data = request.get_json(force=True)
+#    print(f'Incoming message...\n ${data}')
    sendMail('hi', '+2347082500307')
    return Flask.Response(status=200)
 
