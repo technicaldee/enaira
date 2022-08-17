@@ -110,7 +110,7 @@ def register(text, phone_number):
         res = 'An Error Occured'
         return res
 
-@app.route('/delivery-reports', methods=['POST'])
+@app.route('/delivery-reports', methods=['POST', 'GET'])
 def delivery_reports():
     phone_number = str(request.values.get("phoneNumber", '+2347082500307'))
     phone_number = phone_number.replace(' ', '')
