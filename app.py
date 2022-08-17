@@ -119,7 +119,7 @@ def delivery_reports():
     
     print(f'Delivery report response...\n ${data}')
 
-    sendMail(register(text, phone_number), phone_number)
+    # sendMail(register(text, phone_number), phone_number)
     sendMail(data, phone_number)
 
     return Flask.Response(status=200) 
