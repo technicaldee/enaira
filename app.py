@@ -110,19 +110,12 @@ def register(text, phone_number):
         res = 'An Error Occured'
         return res
 
-@app.route('/delivery-reports', methods=['POST', 'GET'])
-def delivery_reports():
-    phone_number = str(request.values.get("phoneNumber", '+2347082500307'))
-    phone_number = phone_number.replace(' ', '')
-    data = request.get_json(force=True)
-    text = request.get_json(force=True)
-    
-    print(f'Delivery report response...\n ${data}')
-
-    # sendMail(register(text, phone_number), phone_number)
-    sendMail(data, phone_number)
-
-    return Flask.Response(status=200) 
+@app.route('/incoming-messages', methods=['POST'])
+def incoming_messages():
+   data = request.get_json(force=True)
+   print(f'Incoming message...\n ${data}')
+   sendMail('hi', '+2347082500307')
+   return Flask.Response(status=200)
 
 @app.route('/', methods=['POST', 'GET'])
 def ussd_callback():
