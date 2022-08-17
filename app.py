@@ -136,44 +136,90 @@ def ussd_callback():
 
     if text == '':
         response  = "CON What would you want to do \n"
+        response += "1. Use this language \n"
+        response += "2. Yi amfani da wannan harshe \n"
+        response += "3. Lo ede yii \n"
+        response += "4. Jiri asụsụ a"
+        response += "5. More languages"
+
+    if text == '1*1':
+        response  = "CON What would you want to do \n"
         response += "1. Create eNaira Wallet \n"
         response += "2. Check my eNaira Info \n"
         response += "3. Load my eNaira wallet \n"
-        response += "4. Transfer money"
+        response += "4. Transfer money \n"
+        response += "5. Pay"
 
-    elif text == '1':
-        message = "Send REGISTER with your \n Full Name, BVN, Password(12 chars or more) \n and Account Number seperated by comma \n eg 'REGISTER Mr John Bassey Okon,2847592048,\nPa$$word1234,2262933119'; \n\nNo spaces after comma"
+    elif text == '1*1*1':
+        response = "CON Do you have a bank account? \n"
+        response += "1. Yes \n"
+        response += "2. No \n"
+
+    elif text == '1*1*1*1':
+        message = "Send REGISTER with your \n Full Name, BVN, Password(12 chars or more) \n and Account Number to 88081 seperated by comma \n eg 'REGISTER Mr John Bassey Okon,2847592048,\nPa$$word1234,2262933119' to 88081. \n\nNo spaces after comma"
         sendMail(message, phone_number)
-        response = "END Dear user, you will receive instructions on how to register for enaira shortly"
+        response = "END Dear customer, you will receive a message on how to register for enaira shortly"
 
-    elif text == '2':
+    elif text == '1*1*1*2':
+        message = "Dear customer, visit the nearest \n POS center to open an account!"
+        sendMail(message, phone_number)
+        response = "END Dear customer, you will receive a message on how to register for enaira shortly"
+
+    elif text == '1*2':
         option2(phone_number)
         response = 'END Dear user, you will receive an SMS with your enaira details shortly'
         return response
         
-    elif text == '3':
+    elif text == '1*3':
+        response  = "CON Credit through? \n"
+        response += "1. Bank \n"
+        response += "2. POS \n"
+        
+    elif text == '1*3*1':
         response  = "CON Select the bank or financial provider to credit from \n"
         response += "1. First Bank \n"
         response += "2. GTCO \n"
         response += "3. Zenith Bank \n"
-        response += "4. Access Bank"
-        response += "4. Titan Trust Bank"
-        response += "4. Load More Banks"
+        response += "5. Access Bank \n"
+        response += "6. Titan Trust Bank \n"
+        response += "7. Load More Banks"
+        
+    elif text == '1*3*2':
+        response  = "END Feature coming soon! \n"
 
-    elif text == '4':
-        response  = "CON Select the bank or financial provider to transfer monry to \n"
+    elif text == '1*4':
+        response  = "CON Transfer money to \n"
+        response += "1. To cash \n"
+        response += "2. Another Wallet \n"
+
+    elif text == '1*4*2':
+        response = "END Send PAY with wallet_address, amount and pin to 88081"
+
+    elif text == '1*5':
+        response = "END Send PAY with wallet_address, amount and pin to 88081"
+
+    elif text == '1*4*1':
+        response  = "CON To Cash \n"
+        response += "1. Bank \n"
+        response += "2. POS \n"
+
+    elif text == '1*4*1*1':
+        response  = "CON Select the bank or financial provider to transfer money to \n"
         response += "1. First Bank \n"
         response += "2. GTCO \n"
         response += "3. Zenith Bank \n"
-        response += "4. Access Bank"
-        response += "4. Titan Trust Bank"
-        response += "4. Load More Banks"
+        response += "4. Access Bank \n"
+        response += "5. Titan Trust Bank \n"
+        response += "6. Load More Banks \n"
 
-    elif '3*' in text:
+    elif text == '1*4*1*2':
+        response  = "END Feature coming soon! \n"
+
+    elif '1*3*1*' in text:
         response = "END Send RECEIVE with account number to 88081"
 
-    elif '4*' in text:
-        response = "END Send TRANSFER with account number to 88081"
+    elif '1*4*1*1*' in text:
+        response = "END Send PAY with account number to 88081"
     else:
         response = 'END An error occured!'
     return response
