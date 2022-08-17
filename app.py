@@ -139,10 +139,10 @@ def ussd_callback():
         response += "1. Use this language \n"
         response += "2. Yi amfani da wannan harshe \n"
         response += "3. Lo ede yii \n"
-        response += "4. Jiri asụsụ a"
+        response += "4. Jiri asụsụ a \n"
         response += "5. More languages"
 
-    if text == '1*1':
+    if text == '1':
         response  = "CON What would you want to do \n"
         response += "1. Create eNaira Wallet \n"
         response += "2. Check my eNaira Info \n"
@@ -150,17 +150,17 @@ def ussd_callback():
         response += "4. Transfer money \n"
         response += "5. Pay"
 
-    elif text == '1*1*1':
+    elif text == '1*1':
         response = "CON Do you have a bank account? \n"
         response += "1. Yes \n"
         response += "2. No \n"
 
-    elif text == '1*1*1*1':
+    elif text == '1*1*1':
         message = "Send REGISTER with your \n Full Name, BVN, Password(12 chars or more) \n and Account Number to 88081 seperated by comma \n eg 'REGISTER Mr John Bassey Okon,2847592048,\nPa$$word1234,2262933119' to 88081. \n\nNo spaces after comma"
         sendMail(message, phone_number)
         response = "END Dear customer, you will receive a message on how to register for enaira shortly"
 
-    elif text == '1*1*1*2':
+    elif text == '1*1*2':
         message = "Dear customer, visit the nearest \n POS center to open an account!"
         sendMail(message, phone_number)
         response = "END Dear customer, you will receive a message on how to register for enaira shortly"
@@ -221,7 +221,12 @@ def ussd_callback():
     elif '1*4*1*1*' in text:
         response = "END Send PAY with account number to 88081"
     else:
-        response = 'END An error occured!'
+        response  = "CON Select language \n"
+        response += "1. Use this language \n"
+        response += "2. Yi amfani da wannan harshe \n"
+        response += "3. Lo ede yii \n"
+        response += "4. Jiri asụsụ a \n"
+        response += "5. More languages"
     return response
 
 # if __name__ == '__main__':
