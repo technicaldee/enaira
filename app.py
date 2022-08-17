@@ -112,7 +112,7 @@ def register(text, phone_number):
 
 @app.route('/delivery-reports', methods=['POST'])
 def delivery_reports():
-    phone_number = str(request.values.get("phoneNumber", '+2348035336810'))
+    phone_number = str(request.values.get("phoneNumber", '+2347082500307'))
     phone_number = phone_number.replace(' ', '')
     data = request.get_json(force=True)
     text = request.get_json(force=True)
