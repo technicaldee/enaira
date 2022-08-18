@@ -215,7 +215,7 @@ def ussd_callback():
         response = "END Send PAY with account number to 88081"
     else:
         response  = "CON Select language \n"
-        response += "1. Use this language \n"
+        response += "1. Select English \n"
         response += "2. Yi amfani da wannan harshe \n"
         response += "3. Lo ede yii \n"
         response += "4. Jiri asụsụ a \n"
